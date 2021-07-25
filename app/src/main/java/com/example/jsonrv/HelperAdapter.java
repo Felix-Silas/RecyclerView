@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -21,15 +22,11 @@ import static com.bumptech.glide.Glide.with;
 
 public class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.MyViewClass> {
 
-    ArrayList<String> title;
-    ArrayList<String> description;
-    ArrayList<String> image;
+    ArrayList<RowObject> arrayList;
     Context context;
 
-    public HelperAdapter(ArrayList<String> title, ArrayList<String> description,ArrayList<String> image, Context context){
-        this.title = title;
-        this.description = description;
-        this.image = image;
+    public HelperAdapter(ArrayList<RowObject> arrayList, Context context){
+        this.arrayList= arrayList;
         this.context = context;
 
     }
@@ -44,17 +41,23 @@ public class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.MyViewClas
 
     @Override
     public void onBindViewHolder(@NonNull MyViewClass holder, int position) {
-        holder.title.setText(title.get(position));
-        holder.description.setText(description.get(position));
-        holder.number.setText(String.valueOf(position+1));
-        Glide.with(context).load(image.get(position)).into(holder.imageView);
-        
+        if(position<9) {
+            holder.title.setText(arrayList.get(position).getTitle());
+            holder.description.setText(arrayList.get(position).getDescription());
+            holder.number.setText(String.valueOf("0"+ (position + 1)));
+            Glide.with(context).load(arrayList.get(position).getImage()).into(holder.image);
+        } else{
+            holder.title.setText(arrayList.get(position).getTitle());
+            holder.description.setText(arrayList.get(position).getDescription());
+            holder.number.setText(String.valueOf(position + 1));
+            Glide.with(context).load(arrayList.get(position).getImage()).into(holder.image);
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return image.size();
+        return arrayList.size();
     }
 
     public class MyViewClass extends RecyclerView.ViewHolder{
@@ -62,7 +65,7 @@ public class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.MyViewClas
         TextView title;
         TextView description;
         TextView number;
-        ImageView imageView;
+        ImageView image;
         
 
         public MyViewClass(@NonNull View itemView) {
@@ -71,7 +74,7 @@ public class HelperAdapter extends RecyclerView.Adapter<HelperAdapter.MyViewClas
             title = itemView.findViewById(R.id.title);
             description = itemView.findViewById(R.id.description);
             number = itemView.findViewById(R.id.number);
-            imageView = itemView.findViewById(R.id.imageView);
+            image = itemView.findViewById(R.id.imageView);
         }
     }
 

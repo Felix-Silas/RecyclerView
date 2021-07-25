@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.provider.Browser;
 import android.widget.LinearLayout;
 
 import org.json.JSONArray;
@@ -13,14 +14,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    ArrayList<String> title = new ArrayList<>();
-    ArrayList<String> description = new ArrayList<>();
-    ArrayList<String> image = new ArrayList<>();
+    ArrayList<RowObject> arrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +36,18 @@ public class MainActivity extends AppCompatActivity {
             JSONArray jsonArray = jsonObject.getJSONArray("homeworkData");
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject homeworkData = jsonArray.getJSONObject(i);
-                title.add(homeworkData.getString("title"));
-                description.add(homeworkData.getString("description"));
-                image.add(homeworkData.getString("image"));
-
+                RowObject rowObject = new RowObject(
+                  homeworkData.getString("title"),
+                  homeworkData.getString("description"),
+                  homeworkData.getString("image")
+                );
+                arrayList.add(rowObject);
 
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        HelperAdapter helperAdapter = new HelperAdapter(title,description,image,MainActivity.this);
+        HelperAdapter helperAdapter = new HelperAdapter(arrayList,MainActivity.this);
         recyclerView.setAdapter(helperAdapter);
     }
 
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] bufferData = new byte[sizeOfFile];
             inputStream.read(bufferData);
             inputStream.close();
-            json = new String(bufferData,"UTF-8");
+            json = new String(bufferData, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
